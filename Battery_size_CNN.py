@@ -17,19 +17,29 @@ app.add_middleware(
     allow_headers=["*"],  # Allows all headers
 )
 
+# Get the current directory of the script
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+
 # Load the trained model
-BASE_DIR = os.path.dirname(os.path.abspath(__file__))  # Get current directory
-MODEL_PATH = os.path.join(BASE_DIR, "Battery_size_CNN.h5")  # Load model from project directory
-model = tf.keras.models.load_model(MODEL_PATH)
+MODEL_PATH = os.path.join(BASE_DIR, "Battery_size_CNN.h5")  
+if os.path.exists(MODEL_PATH):
+    model = tf.keras.models.load_model(MODEL_PATH)
+else:
+    raise FileNotFoundError(f"Model file not found: {MODEL_PATH}")
 
-# Load the saved scaler
-SCALER_PATH = os.path.join(BASE_DIR, "scaler_X.pkl")  # Path to scaler
-scaler_X = joblib.load(SCALER_PATH)
+# Load the saved scaler for input features (X)
+SCALER_X_PATH = os.path.join(BASE_DIR, "scaler_X.pkl")
+if os.path.exists(SCALER_X_PATH):
+    scaler_X = joblib.load(SCALER_X_PATH)
+else:
+    raise FileNotFoundError(f"Scaler file not found: {SCALER_X_PATH}")
 
-# Load the saved scaler
-BASE_DIR = os.path.dirname(os.path.abspath(__file__))  # Get current directory
-SCALER_PATH = os.path.join(BASE_DIR, "scaler_Y.pkl")  # Path to scaler
-scaler_Y = joblib.load(SCALER_PATH)
+# Load the saved scaler for output labels (Y)
+SCALER_Y_PATH = os.path.join(BASE_DIR, "scaler_Y.pkl")
+if os.path.exists(SCALER_Y_PATH):
+    scaler_Y = joblib.load(SCALER_Y_PATH)
+else:
+    raise FileNotFoundError(f"Scaler file not found: {SCALER_Y_PATH}")
 
 
 
