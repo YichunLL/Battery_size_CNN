@@ -1,11 +1,10 @@
+from fastapi.middleware.cors import CORSMiddleware
+from fastapi import FastAPI, HTTPException
+from pydantic import BaseModel
+import tensorflow as tf
 import numpy as np
 import joblib
-import tensorflow as tf
-from tensorflow import keras
-from fastapi import FastAPI
-from pydantic import BaseModel
-import json
-from fastapi.middleware.cors import CORSMiddleware
+import os
 
 # Initialize FastAPI app
 app = FastAPI()
