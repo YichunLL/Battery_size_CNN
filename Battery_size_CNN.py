@@ -47,7 +47,7 @@ def predict(input_data: BatteryInput):
         
         # Convert prediction back to original scale
         prediction_original = scaler_Y.inverse_transform(prediction_scaled)
-        
+        prediction_original = np.where(prediction_original < 0, -prediction_original, prediction_original)
         # Prepare response
         response = {
             "Length_cell": float(prediction_original[0][0]),
