@@ -6,12 +6,30 @@ from fastapi import FastAPI
 from pydantic import BaseModel
 import json
 
-# Load the trained CNN model
-model = keras.models.load_model("Battery_size_CNN.h5")
 
-# Load the saved scalers
-scaler_X = joblib.load("scaler_X.pkl")
-scaler_Y = joblib.load("sclaler_Y.pkl")
+# ✅ Fix CORS Issue
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],  # Allows all domains (change this for security in production)
+    allow_credentials=True,
+    allow_methods=["*"],  # Allows all HTTP methods
+    allow_headers=["*"],  # Allows all headers
+)
+
+# Load the trained model
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))  # Get current directory
+MODEL_PATH = os.path.join(BASE_DIR, "Battery_size_CNN.h5")  # Load model from project directory
+model = tf.keras.models.load_model(MODEL_PATH)
+
+# Load the saved scaler
+SCALER_PATH = os.path.join(BASE_DIR, "scaler_X.pkl")  # Path to scaler
+scaler_X = joblib.load(SCALER_PATH)
+
+# Load the saved scaler
+SCALER_PATH = os.path.join(BASE_DIR, "scaler_Y.pkl")  # Path to scaler
+scaler_Y = joblib.load(SCALER_PATH)
+
+
 
 # Initialize FastAPI app
 app = FastAPI()
