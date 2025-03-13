@@ -5,6 +5,7 @@ from tensorflow import keras
 from fastapi import FastAPI
 from pydantic import BaseModel
 import json
+from fastapi.middleware.cors import CORSMiddleware
 
 # Initialize FastAPI app
 app = FastAPI()
