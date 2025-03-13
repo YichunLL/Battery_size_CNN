@@ -6,7 +6,8 @@ from fastapi import FastAPI
 from pydantic import BaseModel
 import json
 
-
+# Initialize FastAPI app
+app = FastAPI()
 # ✅ Fix CORS Issue
 app.add_middleware(
     CORSMiddleware,
@@ -31,8 +32,7 @@ scaler_Y = joblib.load(SCALER_PATH)
 
 
 
-# Initialize FastAPI app
-app = FastAPI()
+
 
 # Define the input data structure
 class BatteryInput(BaseModel):
