@@ -27,9 +27,9 @@ SCALER_PATH = os.path.join(BASE_DIR, "scaler_X.pkl")  # Path to scaler
 scaler_X = joblib.load(SCALER_PATH)
 
 # Load the saved scaler
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))  # Get current directory
 SCALER_PATH = os.path.join(BASE_DIR, "scaler_Y.pkl")  # Path to scaler
 scaler_Y = joblib.load(SCALER_PATH)
-
 
 
 
