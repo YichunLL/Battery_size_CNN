@@ -99,19 +99,7 @@ def analyze_with_deepseek(predictions, input_data):
                     - **Energy Density**: Compare the given battery specs to industry standards.
                     - **Cell Size**: Evaluate if the predicted cell size is optimal for packing efficiency.
                     - **Power Density**: Assess whether the power density meets modern battery performance standards.
-
-                    #### ✅ **4️⃣ Optimization Suggestions**
-                    **A. Improve Energy Density**  
-                    - Suggest **alternative cell chemistries** for better efficiency.
-                    - Recommend **packaging improvements** to increase energy density.
                     
-                    **B. Improve Thermal Management**  
-                    - Recommend better **cooling strategies** for cell safety and longevity.
-                    
-                    **C. Optimize Cell Arrangement**  
-                    - Suggest ways to **improve packing efficiency** inside the battery pack.
-
-                    🔹 **Provide a structured and concise response.**
                     """
                 }
             ],
