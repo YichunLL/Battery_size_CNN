@@ -100,7 +100,7 @@ def analyze_with_deepseek(predictions, input_data):
                     """
                 }
             ],
-            max_tokens=200
+            max_tokens=500
         )
         
         return response.choices[0].message.content
