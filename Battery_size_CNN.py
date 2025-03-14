@@ -93,17 +93,15 @@ def analyze_with_deepseek(predictions, input_data):
                     - **Length**: {predictions['Length_cell']} mm
                     - **Width**: {predictions['Width_cell']} mm
                     - **Height**: {predictions['Height_cell']} mm
-                    - **Power Density**: {predictions['Power_density']} Wh/kg
                     
                     #### **3️⃣ Observations**
                     - **Energy Density**: Compare the given battery specs to industry standards.
                     - **Cell Size**: Evaluate if the predicted cell size is optimal for packing efficiency.
-                    - **Power Density**: Assess whether the power density meets modern battery performance standards.
                     
                     """
                 }
             ],
-            max_tokens=800
+            max_tokens=400
         )
 
         return response.choices[0].message.content
