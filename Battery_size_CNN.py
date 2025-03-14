@@ -68,46 +68,60 @@ def home():
     return {"message": "Battery CNN Prediction API is running"}
 
 
-# ✅ Function to analyze predictions using ChatGPT API
 def analyze_with_deepseek(predictions, input_data):
     if not DEEPSEEK_API_KEY:
         return {"error": "DeepSeek API key is missing!"}
 
     try:
         response = client.chat.completions.create(
-            model="deepseek-chat",  # ✅ Ensure this is the correct model name
+            model="deepseek-chat",
             messages=[
-                {"role": "system", "content": "You are an AI assistant helping with battery optimization."},
+                {"role": "system", "content": "You are an AI expert specializing in battery design and optimization."},
                 {
                     "role": "user",
                     "content": f"""
-                    Analyze and optimize this battery prediction:
+                    ### 🔍 **Battery Design Analysis & Optimization**
+                    
+                    #### **1️⃣ Battery Pack Specifications**:
+                    - **Length**: {input_data.Length_pack} mm
+                    - **Width**: {input_data.Width_pack} mm
+                    - **Height**: {input_data.Height_pack} mm
+                    - **Energy**: {input_data.Energy} kWh
+                    - **Voltage**: {input_data.Total_Voltage} V
+                    
+                    #### **2️⃣ Predicted Cell Specifications**:
+                    - **Length**: {predictions['Length_cell']} mm
+                    - **Width**: {predictions['Width_cell']} mm
+                    - **Height**: {predictions['Height_cell']} mm
+                    - **Power Density**: {predictions['Power_density']} Wh/kg
+                    
+                    #### **3️⃣ Observations**
+                    - **Energy Density**: Compare the given battery specs to industry standards.
+                    - **Cell Size**: Evaluate if the predicted cell size is optimal for packing efficiency.
+                    - **Power Density**: Assess whether the power density meets modern battery performance standards.
 
-                    **Battery Pack Specs**:
-                    - Length: {input_data.Length_pack} mm
-                    - Width: {input_data.Width_pack} mm
-                    - Height: {input_data.Height_pack} mm
-                    - Energy: {input_data.Energy} kWh
-                    - Voltage: {input_data.Total_Voltage} V
+                    #### ✅ **4️⃣ Optimization Suggestions**
+                    **A. Improve Energy Density**  
+                    - Suggest **alternative cell chemistries** for better efficiency.
+                    - Recommend **packaging improvements** to increase energy density.
+                    
+                    **B. Improve Thermal Management**  
+                    - Recommend better **cooling strategies** for cell safety and longevity.
+                    
+                    **C. Optimize Cell Arrangement**  
+                    - Suggest ways to **improve packing efficiency** inside the battery pack.
 
-                    **Predicted Cell Size**:
-                    - Length: {predictions['Length_cell']} mm
-                    - Width: {predictions['Width_cell']} mm
-                    - Height: {predictions['Height_cell']} mm
-                    - Power Density: {predictions['Power_density']} Wh/kg
-
-                    Suggest improvements for better performance.
+                    🔹 **Provide a structured and concise response.**
                     """
                 }
             ],
-            max_tokens=500
+            max_tokens=800
         )
-        
+
         return response.choices[0].message.content
 
     except openai.OpenAIError as e:
         return {"error": "ChatGPT API failed", "message": str(e)}
-
 
 
 
