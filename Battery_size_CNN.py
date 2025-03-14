@@ -68,6 +68,7 @@ def home():
     return {"message": "Battery CNN Prediction API is running"}
 
 
+# ✅ Function to analyze predictions using DeepSeek API with properly formatted numbers
 def analyze_with_deepseek(predictions, input_data):
     if not DEEPSEEK_API_KEY:
         return {"error": "DeepSeek API key is missing!"}
@@ -76,38 +77,38 @@ def analyze_with_deepseek(predictions, input_data):
         response = client.chat.completions.create(
             model="deepseek-chat",
             messages=[
-                {"role": "system", "content": "You are an AI expert specializing in battery design and optimization."},
+                {"role": "system", "content": "You are an AI expert in battery optimization. Provide clear, readable analysis with properly formatted numbers."},
                 {
                     "role": "user",
                     "content": f"""
+                    ### **Battery Pack Specifications**
+                    - **Dimensions**: {input_data.Length_pack:.0f} mm × {input_data.Width_pack:.0f} mm × {input_data.Height_pack:.0f} mm
+                    - **Volume**: {input_data.Length_pack * input_data.Width_pack * input_data.Height_pack / 1e9:.2f} m³
+                    - **Energy**: {input_data.Energy:.2f} kWh
+                    - **Voltage**: {input_data.Total_Voltage:.2f} V
+
+                    ### **Predicted Cell Specifications**
+                    - **Cell Dimensions**: {predictions['Length_cell']:.0f} mm × {predictions['Width_cell']:.0f} mm × {predictions['Height_cell']:.0f} mm
+                    - **Cell Volume**: {predictions['Length_cell'] * predictions['Width_cell'] * predictions['Height_cell'] / 1e6:.3f} L
+                    - **Power Density**: {predictions['Power_density']:.2f} Wh/kg
+
                     ### 🔍 **Battery Design Analysis & Optimization**
                     
-                    #### **1️⃣ Battery Pack Specifications**:
-                    - **Length**: {input_data.Length_pack} mm
-                    - **Width**: {input_data.Width_pack} mm
-                    - **Height**: {input_data.Height_pack} mm
-                    - **Energy**: {input_data.Energy} kWh
-                    - **Voltage**: {input_data.Total_Voltage} V
-                    
-                    #### **2️⃣ Predicted Cell Specifications**:
-                    - **Length**: {predictions['Length_cell']} mm
-                    - **Width**: {predictions['Width_cell']} mm
-                    - **Height**: {predictions['Height_cell']} mm
-                    
-                    #### **3️⃣ Observations**
+                    #### **Observations**
                     - **Energy Density**: Compare the given battery specs to industry standards.
                     - **Cell Size**: Evaluate if the predicted cell size is optimal for packing efficiency.
-                    
+
+
                     """
                 }
             ],
-            max_tokens=400
+            max_tokens=350  # ✅ Reduced token count for faster response
         )
-
+        
         return response.choices[0].message.content
 
     except openai.OpenAIError as e:
-        return {"error": "ChatGPT API failed", "message": str(e)}
+        return {"error": "ChatGotion AI failed", "message": str(e)}
 
 
 
