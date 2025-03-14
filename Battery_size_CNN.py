@@ -93,12 +93,6 @@ def analyze_with_deepseek(predictions, input_data):
                     - **Power Density**: {predictions['Power_density']:.2f} Wh/k
 
                     
-                    ### **Cell Size & Packing Efficiency**:
-                    - **Cell Volume**: {predictions['Length_cell'] * predictions['Width_cell'] * predictions['Height_cell'] / 1e6:.3f} L
-                    - **Number of Cells in Pack**:
-                      - Total battery pack volume: {input_data.Length_pack * input_data.Width_pack * input_data.Height_pack / 1e9:.2f} m³
-                      - Estimated max number of cells: {(input_data.Length_pack * input_data.Width_pack * input_data.Height_pack) / (predictions['Length_cell'] * predictions['Width_cell'] * predictions['Height_cell']):.0f} cells
-
 
 
 
