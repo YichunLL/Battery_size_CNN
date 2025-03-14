@@ -10,13 +10,12 @@ import openai
 
 
 app = FastAPI()
-
 # ✅ Load API keys securely
 DEEPSEEK_API_KEY = os.getenv("DEEPSEEK_API_KEY")  # Secure API Key
 
 # ✅ Configure OpenAI Client (DeepSeek API)
 openai.api_key = DEEPSEEK_API_KEY
-openai.base_url = "https://api.deepseek.com"
+openai.api_base = "https://api.deepseek.com"
 
 
 # ✅ Fix CORS Issue
@@ -105,9 +104,8 @@ def analyze_with_deepseek(predictions, input_data):
         
         return response["choices"][0]["message"]["content"]
 
-    except Exception as e:
+    except openai.OpenAIError as e:
         return {"error": "ChatGPT API failed", "message": str(e)}
-  
 
 
 
