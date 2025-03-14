@@ -6,10 +6,14 @@ import numpy as np
 import joblib
 import os
 import requests
+import openai
 
+# ✅ Load API keys securely
+DEEPSEEK_API_KEY = os.getenv("DEEPSEEK_API_KEY")  # Secure API Key
 
-# ✅ Load API key from environment variables
-DEEPSEEK_API_KEY = os.getenv("DEEPSEEK_API_KEY")  # Securely retrieve key
+# ✅ Configure OpenAI Client (DeepSeek API)
+openai.api_key = DEEPSEEK_API_KEY
+openai.base_url = "https://api.deepseek.com"
 
 # Initialize FastAPI app
 app = FastAPI()
@@ -62,39 +66,45 @@ def home():
     return {"message": "Battery CNN Prediction API is running"}
 
 
+# ✅ Function to analyze predictions using DeepSeek API
 def analyze_with_deepseek(predictions, input_data):
     if not DEEPSEEK_API_KEY:
         return {"error": "DeepSeek API key is missing!"}
 
-    deepseek_api_url = "https://api.deepseek.com/v1"
-    headers = {
-        "Authorization": f"Bearer {DEEPSEEK_API_KEY}",  # ✅ Securely use API key
-        "Content-Type": "application/json"
-    }
-    
-    payload = {
-        "query": "Analyze and optimize this battery prediction.",
-        "input_data": {
-            "pack_dimensions": {
-                "Length_pack": input_data.Length_pack,
-                "Width_pack": input_data.Width_pack,
-                "Height_pack": input_data.Height_pack
-            },
-            "electrical_properties": {
-                "Energy": input_data.Energy,
-                "Total_Voltage": input_data.Total_Voltage
-            },
-            "predicted_cell_size": predictions
-        }
-    }
-    
-    response = requests.post(deepseek_api_url, json=payload, headers=headers)
-    
-    if response.status_code == 200:
-        return response.json()  # ✅ Return DeepSeek's response
-    else:
-        return {"error": "DeepSeek API failed", "status_code": response.status_code, "message": response.text}
+    try:
+        response = openai.ChatCompletion.create(
+            model="deepseek-chat",  # ✅ Ensure this is the correct model name
+            messages=[
+                {"role": "system", "content": "You are an AI assistant helping with battery optimization."},
+                {
+                    "role": "user",
+                    "content": f"""
+                    Analyze and optimize this battery prediction:
 
+                    **Battery Pack Specs**:
+                    - Length: {input_data.Length_pack} mm
+                    - Width: {input_data.Width_pack} mm
+                    - Height: {input_data.Height_pack} mm
+                    - Energy: {input_data.Energy} kWh
+                    - Voltage: {input_data.Total_Voltage} V
+
+                    **Predicted Cell Size**:
+                    - Length: {predictions['Length_cell']} mm
+                    - Width: {predictions['Width_cell']} mm
+                    - Height: {predictions['Height_cell']} mm
+                    - Power Density: {predictions['Power_density']} Wh/kg
+
+                    Suggest improvements for better performance.
+                    """
+                }
+            ],
+            max_tokens=200
+        )
+
+        return response["choices"][0]["message"]["content"]
+
+    except openai.error.OpenAIError as e:
+        return {"error": "DeepSeek API failed", "message": str(e)}
 
 
 
