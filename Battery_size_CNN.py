@@ -8,6 +8,10 @@ import os
 import requests
 import openai
 
+
+# Initialize FastAPI app
+app = FastAPI()
+
 # ✅ Load API keys securely
 DEEPSEEK_API_KEY = os.getenv("DEEPSEEK_API_KEY")  # Secure API Key
 
@@ -15,8 +19,7 @@ DEEPSEEK_API_KEY = os.getenv("DEEPSEEK_API_KEY")  # Secure API Key
 openai.api_key = DEEPSEEK_API_KEY
 openai.base_url = "https://api.deepseek.com"
 
-# Initialize FastAPI app
-app = FastAPI()
+
 # ✅ Fix CORS Issue
 app.add_middleware(
     CORSMiddleware,
@@ -66,7 +69,7 @@ def home():
     return {"message": "Battery CNN Prediction API is running"}
 
 
-# ✅ Function to analyze predictions using DeepSeek API
+# ✅ Function to analyze predictions using ChatGPT API
 def analyze_with_deepseek(predictions, input_data):
     if not DEEPSEEK_API_KEY:
         return {"error": "DeepSeek API key is missing!"}
@@ -100,11 +103,13 @@ def analyze_with_deepseek(predictions, input_data):
             ],
             max_tokens=200
         )
-
+        
         return response["choices"][0]["message"]["content"]
 
-    except openai.error.OpenAIError as e:
-        return {"error": "DeepSeek API failed", "message": str(e)}
+    except openai.OpenAIError as e:
+        return {"error": "ChatGPT API failed", "message": str(e)}
+
+  
 
 
 
