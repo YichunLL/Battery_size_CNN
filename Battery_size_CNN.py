@@ -5,6 +5,7 @@ import tensorflow as tf
 import numpy as np
 import joblib
 import os
+import requests
 
 # Initialize FastAPI app
 app = FastAPI()
@@ -56,6 +57,41 @@ class BatteryInput(BaseModel):
 def home():
     return {"message": "Battery CNN Prediction API is running"}
 
+
+# ✅ Function to send predictions to DeepSeek API for insights
+def analyze_with_deepseek(predictions, input_data):
+    deepseek_api_url = "https://api.deepseek.com/analyze"  # Replace with actual DeepSeek API
+    headers = {
+        "Authorization": "Bearer YOUR_DEEPSEEK_API_KEY",
+        "Content-Type": "application/json"
+    }
+    
+    payload = {
+        "query": "Analyze and optimize this battery prediction.",
+        "input_data": {
+            "pack_dimensions": {
+                "Length_pack": input_data.Length_pack,
+                "Width_pack": input_data.Width_pack,
+                "Height_pack": input_data.Height_pack
+            },
+            "electrical_properties": {
+                "Energy": input_data.Energy,
+                "Total_Voltage": input_data.Total_Voltage
+            },
+            "predicted_cell_size": predictions
+        }
+    }
+    
+    response = requests.post(deepseek_api_url, json=payload, headers=headers)
+    
+    if response.status_code == 200:
+        return response.json()  # Return DeepSeek's response
+    else:
+        return {"error": "DeepSeek API failed", "status_code": response.status_code}
+
+
+
+
 @app.post("/predict/")
 def predict(input_data: BatteryInput):
     try:
@@ -84,7 +120,10 @@ def predict(input_data: BatteryInput):
             "Power_density": float(prediction_original[0][3])
         }
         
-        return response
-    
+# ✅ Send predictions and input data to DeepSeek for deeper analysis
+        deepseek_response = analyze_with_deepseek(response, input_data)
+
+        return {"predictions": response, "deepseek_analysis": deepseek_response}
+
     except Exception as e:
-        return {"error": str(e)}
+        raise HTTPException(status_code=500, detail=f"Prediction failed: {str(e)}")
