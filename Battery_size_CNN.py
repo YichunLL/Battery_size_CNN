@@ -66,7 +66,7 @@ def analyze_with_deepseek(predictions, input_data):
     if not DEEPSEEK_API_KEY:
         return {"error": "DeepSeek API key is missing!"}
 
-    deepseek_api_url = "https://api.deepseek.com/analyze"
+    deepseek_api_url = "https://api.deepseek.com" 
     headers = {
         "Authorization": f"Bearer {DEEPSEEK_API_KEY}",  # ✅ Securely use API key
         "Content-Type": "application/json"
