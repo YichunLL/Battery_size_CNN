@@ -90,19 +90,22 @@ def analyze_with_deepseek(predictions, input_data):
                     ### **Predicted Cell Specifications**
                     - **Cell Dimensions**: {predictions['Length_cell']:.0f} mm × {predictions['Width_cell']:.0f} mm × {predictions['Height_cell']:.0f} mm
                     - **Cell Volume**: {predictions['Length_cell'] * predictions['Width_cell'] * predictions['Height_cell'] / 1e6:.3f} L
-                    - **Power Density**: {predictions['Power_density']:.2f} Wh/kg
+                    - **Power Density**: {predictions['Power_density']:.2f} Wh/k
 
-                    ### 🔍 **Battery Design Analysis & Optimization**
                     
-                    #### **Observations**
-                    - **Energy Density**: Compare the given battery specs to industry standards.
-                    - **Cell Size**: Evaluate if the predicted cell size is optimal for packing efficiency.
+                    ### **Cell Size & Packing Efficiency**:
+                    - **Cell Volume**: {predictions['Length_cell'] * predictions['Width_cell'] * predictions['Height_cell'] / 1e6:.3f} L
+                    - **Number of Cells in Pack**:
+                      - Total battery pack volume: {input_data.Length_pack * input_data.Width_pack * input_data.Height_pack / 1e9:.2f} m³
+                      - Estimated max number of cells: {(input_data.Length_pack * input_data.Width_pack * input_data.Height_pack) / (predictions['Length_cell'] * predictions['Width_cell'] * predictions['Height_cell']):.0f} cells
+
+
 
 
                     """
                 }
             ],
-            max_tokens=350  # ✅ Reduced token count for faster response
+            max_tokens=400  # ✅ Reduced token count for faster response
         )
         
         return response.choices[0].message.content
