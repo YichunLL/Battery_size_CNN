@@ -7,6 +7,10 @@ import joblib
 import os
 import requests
 
+
+# ✅ Load API key from environment variables
+DEEPSEEK_API_KEY = os.getenv("DEEPSEEK_API_KEY")  # Securely retrieve key
+
 # Initialize FastAPI app
 app = FastAPI()
 # ✅ Fix CORS Issue
@@ -58,11 +62,13 @@ def home():
     return {"message": "Battery CNN Prediction API is running"}
 
 
-# ✅ Function to send predictions to DeepSeek API for insights
 def analyze_with_deepseek(predictions, input_data):
-    deepseek_api_url = "https://api.deepseek.com/analyze"  # Replace with actual DeepSeek API
+    if not DEEPSEEK_API_KEY:
+        return {"error": "DeepSeek API key is missing!"}
+
+    deepseek_api_url = "https://api.deepseek.com/analyze"
     headers = {
-        "Authorization": "Bearer YOUR_DEEPSEEK_API_KEY",
+        "Authorization": f"Bearer {DEEPSEEK_API_KEY}",  # ✅ Securely use API key
         "Content-Type": "application/json"
     }
     
@@ -85,9 +91,9 @@ def analyze_with_deepseek(predictions, input_data):
     response = requests.post(deepseek_api_url, json=payload, headers=headers)
     
     if response.status_code == 200:
-        return response.json()  # Return DeepSeek's response
+        return response.json()  # ✅ Return DeepSeek's response
     else:
-        return {"error": "DeepSeek API failed", "status_code": response.status_code}
+        return {"error": "DeepSeek API failed", "status_code": response.status_code, "message": response.text}
 
 
 
