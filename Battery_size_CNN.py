@@ -9,7 +9,6 @@ import requests
 import openai
 
 
-# Initialize FastAPI app
 app = FastAPI()
 
 # ✅ Load API keys securely
@@ -106,9 +105,8 @@ def analyze_with_deepseek(predictions, input_data):
         
         return response["choices"][0]["message"]["content"]
 
-    except openai.OpenAIError as e:
+    except Exception as e:
         return {"error": "ChatGPT API failed", "message": str(e)}
-
   
 
 
@@ -141,10 +139,10 @@ def predict(input_data: BatteryInput):
             "Power_density": float(prediction_original[0][3])
         }
         
-# ✅ Send predictions and input data to DeepSeek for deeper analysis
-        deepseek_response = analyze_with_deepseek(response, input_data)
+# ✅ Send predictions to ChatGPT for optimization suggestions
+        chatgpt_response = analyze_with_deepseek(response, input_data)
 
-        return {"predictions": response, "deepseek_analysis": deepseek_response}
+        return {"predictions": response, "deepseek_analysis": chatgpt_response}
 
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Prediction failed: {str(e)}")
