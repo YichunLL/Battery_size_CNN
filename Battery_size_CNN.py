@@ -77,36 +77,43 @@ def analyze_with_deepseek(predictions, input_data):
         response = client.chat.completions.create(
             model="deepseek-chat",
             messages=[
-                {"role": "system", "content": "You are an AI expert in battery optimization. Provide clear, readable analysis with properly formatted numbers."},
+                {
+                    "role": "system",
+                    "content": (
+                        "You are an AI expert in battery optimization. "
+                        "Explain concepts clearly and use markdown format. "
+                        "Avoid LaTeX formatting (no \\[ \\], \\text{}, \\frac{}). "
+                        "Instead, use plain math notation like `E = P × t` or `Energy = Power / Voltage`."
+                    )
+                },
                 {
                     "role": "user",
                     "content": f"""
-                    ### **Battery Pack Specifications**
-                    - **Dimensions**: {input_data.Length_pack:.0f} mm × {input_data.Width_pack:.0f} mm × {input_data.Height_pack:.0f} mm
-                    - **Volume**: {input_data.Length_pack * input_data.Width_pack * input_data.Height_pack / 1e9:.2f} m³
-                    - **Energy**: {input_data.Energy:.2f} kWh
-                    - **Voltage**: {input_data.Total_Voltage:.2f} V
+### 🔋 Battery Pack Specifications
+- **Dimensions**: {input_data.Length_pack:.0f} mm × {input_data.Width_pack:.0f} mm × {input_data.Height_pack:.0f} mm
+- **Volume**: {input_data.Length_pack * input_data.Width_pack * input_data.Height_pack / 1e9:.2f} m³
+- **Energy**: {input_data.Energy:.2f} kWh
+- **Voltage**: {input_data.Total_Voltage:.2f} V
 
-                    ### **Predicted Cell Specifications**
-                    - **Cell Dimensions**: {predictions['Length_cell']:.0f} mm × {predictions['Width_cell']:.0f} mm × {predictions['Height_cell']:.0f} mm
-                    - **Cell Volume**: {predictions['Length_cell'] * predictions['Width_cell'] * predictions['Height_cell'] / 1e6:.3f} L
-                    - **Power Density**: {predictions['Power_density']:.2f} Wh/k
+### 📦 Predicted Cell Specifications
+- **Cell Dimensions**: {predictions['Length_cell']:.0f} mm × {predictions['Width_cell']:.0f} mm × {predictions['Height_cell']:.0f} mm
+- **Cell Volume**: {predictions['Length_cell'] * predictions['Width_cell'] * predictions['Height_cell'] / 1e6:.3f} L
+- **Power Density**: {predictions['Power_density']:.2f} Wh/kg
 
-                    
+Please analyze:
+- The pack-to-cell compatibility
 
-
-
-                    """
+Use **clear, readable markdown**, and keep equations in plain text (e.g., `Energy Density = Energy / Volume`).
+"""
                 }
             ],
-            max_tokens=400  # ✅ Reduced token count for faster response
+            max_tokens=500
         )
-        
+
         return response.choices[0].message.content
 
     except openai.OpenAIError as e:
-        return {"error": "ChatGotion AI failed", "message": str(e)}
-
+        return {"error": "DeepSeek AI failed", "message": str(e)}
 
 
 @app.post("/predict/")
