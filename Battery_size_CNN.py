@@ -68,7 +68,6 @@ def home():
     return {"message": "Battery CNN Prediction API is running"}
 
 
-# ✅ Function to analyze predictions using DeepSeek API with properly formatted numbers
 def analyze_with_deepseek(predictions, input_data):
     if not DEEPSEEK_API_KEY:
         return {"error": "DeepSeek API key is missing!"}
@@ -83,27 +82,30 @@ def analyze_with_deepseek(predictions, input_data):
                         "You are an AI expert in battery optimization. "
                         "Explain concepts clearly and use markdown format. "
                         "Avoid LaTeX formatting (no \\[ \\], \\text{}, \\frac{}). "
-                        "Instead, use plain math notation like `E = P × t` or `Energy = Power / Voltage`."
+                        "Do NOT use markdown headings (#). "
+                        "Instead, use bold labels like **Battery Pack Specs**, and format formulas like `E = P × t`."
                     )
                 },
                 {
                     "role": "user",
                     "content": f"""
-### 🔋 Battery Pack Specifications
-- **Dimensions**: {input_data.Length_pack:.0f} mm × {input_data.Width_pack:.0f} mm × {input_data.Height_pack:.0f} mm
-- **Volume**: {input_data.Length_pack * input_data.Width_pack * input_data.Height_pack / 1e9:.2f} m³
-- **Energy**: {input_data.Energy:.2f} kWh
-- **Voltage**: {input_data.Total_Voltage:.2f} V
+**🔋 Battery Pack Specifications**
+- **Dimensions**: {input_data.Length_pack:.0f} mm × {input_data.Width_pack:.0f} mm × {input_data.Height_pack:.0f} mm  
+- **Volume**: {input_data.Length_pack * input_data.Width_pack * input_data.Height_pack / 1e9:.2f} m³  
+- **Energy**: {input_data.Energy:.2f} kWh  
+- **Voltage**: {input_data.Total_Voltage:.2f} V  
 
-### 📦 Predicted Cell Specifications
-- **Cell Dimensions**: {predictions['Length_cell']:.0f} mm × {predictions['Width_cell']:.0f} mm × {predictions['Height_cell']:.0f} mm
-- **Cell Volume**: {predictions['Length_cell'] * predictions['Width_cell'] * predictions['Height_cell'] / 1e6:.3f} L
-- **Power Density**: {predictions['Power_density']:.2f} Wh/kg
+**📦 Predicted Cell Specifications**
+- **Cell Dimensions**: {predictions['Length_cell']:.0f} mm × {predictions['Width_cell']:.0f} mm × {predictions['Height_cell']:.0f} mm  
+- **Cell Volume**: {predictions['Length_cell'] * predictions['Width_cell'] * predictions['Height_cell'] / 1e6:.3f} L  
+- **Power Density**: {predictions['Power_density']:.2f} Wh/kg  
 
 Please analyze:
-- The pack-to-cell compatibility
+- Physical fit between pack and cells
+- Energy & power density consistency
+- Suggestions to improve configuration
 
-Use **clear, readable markdown**, and keep equations in plain text (e.g., `Energy Density = Energy / Volume`).
+Use **clear markdown**, plain equations like `Energy Density = Energy / Volume`, and do not use large heading styles.
 """
                 }
             ],
